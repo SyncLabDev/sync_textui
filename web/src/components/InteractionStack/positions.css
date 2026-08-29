@@ -1,0 +1,30 @@
+/* Nine-anchor positioning. The root is a full-size non-interactive overlay inside
+   its containing block (#root in FiveM, the dev viewport frame in browser mode);
+   each stack is absolutely anchored and grows inward. */
+.sync-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.sync-stack {
+  position: absolute;
+  display: flex;
+  pointer-events: none;
+}
+
+.sync-stack-vertical { flex-direction: column; }
+.sync-stack-horizontal { flex-direction: row; align-items: center; }
+
+.pos-top { top: 4vh; }
+.pos-middle { top: 50%; transform: translateY(-50%); }
+.pos-bottom { bottom: 4vh; }
+.pos-left { left: 2.5vw; align-items: flex-start; }
+.pos-center-x { left: 50%; transform: translateX(-50%); align-items: center; }
+.pos-middle.pos-center-x { transform: translate(-50%, -50%); }
+.pos-right { right: 2.5vw; align-items: flex-end; }
+
+/* Horizontal stacks at left/right anchors grow toward the screen edge */
+.pos-left.sync-stack-horizontal { align-items: center; }
+.pos-right.sync-stack-horizontal { align-items: center; }

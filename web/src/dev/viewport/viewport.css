@@ -1,0 +1,81 @@
+/* Simulated game viewport with scaled overlays. */
+
+.sync-viewport {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.sync-viewport-bg {
+  position: absolute;
+  inset: 0;
+}
+.sync-viewport-bg-gameplay { background: linear-gradient(160deg, #10141d 0%, #0a0d14 55%, #060810 100%); }
+.sync-viewport-bg-neutral { background: #12161f; }
+.sync-viewport-bg-transparent {
+  background: repeating-conic-gradient(#151a24 0% 25%, #0d111b 0% 50%) 50% / 24px 24px;
+}
+
+.sync-frame {
+  position: relative;
+  transform-origin: center center;
+  background: transparent;
+  /* The frame is transparent by design — production NUI never has a backdrop. */
+}
+
+.sync-overlay {
+  position: absolute;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* 32px safe area, matching Config default spacing used by the runtime anchors */
+.sync-overlay-safe {
+  inset: 32px;
+  border: 2px dashed rgba(107, 191, 255, 0.35);
+  border-radius: 2px;
+}
+
+/* 10% grid drawn in the frame's own units — scales with the viewport, not the browser */
+.sync-overlay-grid {
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(139, 150, 168, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 150, 168, 0.14) 1px, transparent 1px),
+    linear-gradient(to right, rgba(139, 150, 168, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 150, 168, 0.08) 1px, transparent 1px);
+  background-size: 10% 10%, 10% 10%, 2% 2%, 2% 2%;
+}
+
+.sync-overlay-center-x {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(107, 191, 255, 0.45);
+}
+.sync-overlay-center-y {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(107, 191, 255, 0.45);
+}
+
+.sync-viewport-status {
+  position: fixed;
+  left: 16px;
+  bottom: 14px;
+  z-index: 60;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: #8b96a8;
+  background: rgba(6, 8, 16, 0.72);
+  border: 1px solid rgba(107, 191, 255, 0.15);
+  border-radius: 4px;
+  padding: 4px 9px;
+  pointer-events: none;
+}

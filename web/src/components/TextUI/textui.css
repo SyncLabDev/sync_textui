@@ -1,0 +1,224 @@
+/* Interaction card — the SYNC identity surface. Dark, precise, accent-sparing. */
+
+.sync-card {
+  --card-bg: var(--sync-surface);
+  --card-raised: var(--sync-surface-raised);
+  --card-accent: var(--sync-accent);
+  --card-border: var(--sync-border);
+
+  position: relative;
+  min-width: 210px;
+  max-width: 340px;
+  padding: 9px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--sync-radius);
+  transform-origin: left center;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 150ms ease;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+
+.sync-card[data-variant='full'] {
+  padding-bottom: 12px;
+}
+
+.sync-card-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--sync-text);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.sync-card-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sync-card-description {
+  margin-top: 6px;
+  padding-left: 34px;
+  color: var(--sync-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: normal;
+}
+
+.sync-card-image {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* ---------- Keycap ---------- */
+
+.sync-keycap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  background: var(--card-raised);
+  border: 1px solid var(--card-border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--sync-text);
+  flex-shrink: 0;
+  transition: transform 90ms ease, border-color 180ms ease;
+}
+
+/* Subtle 1px keycap travel while the hold is active. */
+.sync-card[data-state='holding'] .sync-keycap {
+  transform: translateY(1px);
+  border-bottom-width: 1px;
+}
+
+/* ---------- States ---------- */
+
+.sync-card[data-state='active'] { --card-accent: #6bbfff; border-color: rgba(107, 191, 255, 0.45); }
+.sync-card[data-state='holding'] { border-color: rgba(107, 191, 255, 0.55); }
+.sync-card[data-state='processing'] { border-color: rgba(107, 191, 255, 0.35); }
+.sync-card[data-state='loading'] { border-color: rgba(139, 150, 168, 0.35); }
+.sync-card[data-state='success'] {
+  --card-accent: #57d9a3;
+  border-color: rgba(87, 217, 163, 0.45);
+}
+.sync-card[data-state='warning'] {
+  --card-accent: #e8b45a;
+  border-color: rgba(232, 180, 90, 0.45);
+}
+.sync-card[data-state='error'] {
+  --card-accent: #e05c5c;
+  border-color: rgba(224, 92, 92, 0.5);
+}
+.sync-card[data-state='disabled'] { opacity: 0.45; filter: saturate(0.4); }
+.sync-card[data-state='success'] .sync-keycap { border-bottom-color: rgba(87, 217, 163, 0.5); }
+.sync-card[data-state='error'] .sync-keycap { border-bottom-color: rgba(224, 92, 92, 0.5); }
+
+/* ---------- Progress ---------- */
+
+.sync-progress {
+  margin-top: 8px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sync-progress-fill {
+  height: 100%;
+  background: var(--card-accent);
+  transition: width 120ms linear;
+}
+
+.sync-card[data-state='success'] .sync-progress-fill { background: #57d9a3; }
+.sync-card[data-state='error'] .sync-progress-fill { background: #e05c5c; }
+
+/* ---------- Entry animations (8 presets, transform/opacity only) ---------- */
+
+@keyframes sync-anim-expand {
+  from { opacity: 0; transform: scale(0.92) scaleX(0.9); }
+  to { opacity: 1; transform: scale(1) scaleX(1); }
+}
+@keyframes sync-anim-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sync-anim-slide-left {
+  from { opacity: 0; transform: translateX(-14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes sync-anim-slide-right {
+  from { opacity: 0; transform: translateX(14px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes sync-anim-slide-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sync-anim-slide-down {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes sync-anim-scale {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes sync-anim-pop {
+  0% { opacity: 0; transform: scale(0.8); }
+  60% { opacity: 1; transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.sync-anim-expand { animation: sync-anim-expand 180ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sync-anim-fade { animation: sync-anim-fade 150ms ease-out; }
+.sync-anim-slide-left { animation: sync-anim-slide-left 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sync-anim-slide-right { animation: sync-anim-slide-right 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sync-anim-slide-up { animation: sync-anim-slide-up 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sync-anim-slide-down { animation: sync-anim-slide-down 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sync-anim-scale { animation: sync-anim-scale 180ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sync-anim-pop { animation: sync-anim-pop 220ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* ---------- Reduced motion ---------- */
+
+[data-reduce-motion='true'] .sync-card,
+.sync-root[data-reduce-motion] .sync-card {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sync-card {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- High contrast ---------- */
+
+.sync-high-contrast .sync-card {
+  --card-bg: #000000;
+  --card-border: rgba(255, 255, 255, 0.6);
+  box-shadow: none;
+}
+.sync-high-contrast .sync-card-text { color: #ffffff; }
+.sync-high-contrast .sync-card-description { color: #d0d5dd; }
+.sync-high-contrast .sync-keycap {
+  background: #1a1f2b;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- Theme modifiers ---------- */
+
+/* minimal */
+.sync-theme-minimal { --card-bg: #101318; --card-border: rgba(255, 255, 255, 0.08); --sync-radius: 4px; }
+.sync-theme-minimal .sync-keycap { background: transparent; border-bottom-width: 1px; }
+.sync-theme-minimal .sync-card { box-shadow: none; }
+
+/* glass */
+.sync-theme-glass {
+  --card-bg: rgba(16, 21, 31, 0.62);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --sync-radius: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* compact */
+.sync-theme-compact { --card-bg: #0b0e15; --sync-radius: 3px; min-width: 170px; padding: 7px 11px; }
+.sync-theme-compact .sync-keycap { min-width: 20px; height: 20px; font-size: 10px; }
+.sync-theme-compact .sync-card-main { font-size: 12px; }
+.sync-theme-compact .sync-card { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }
