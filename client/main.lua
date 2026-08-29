@@ -14,7 +14,7 @@ AddEventHandler('onClientResourceStart', function(resource)
 
     Sync.State.Reset()
 
-    print(('[sync_textui] v%s started (framework: %s)'):format(GetResourceMetadata(GetCurrentResourceName(), 'version', 0) or '2.1.0', Sync.Bridge.getFrameworkName()))
+    print(('[sync_textui] v%s started (framework: %s)'):format(GetResourceMetadata(GetCurrentResourceName(), 'version', 0) or '2.1.1', Sync.Bridge.getFrameworkName()))
 
     -- 'replace' policy spins up the continuous ox TextUI watchdog; other modes
     -- run no thread (per-card suppression happens inline on Show).

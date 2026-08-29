@@ -2,6 +2,12 @@
 
 All notable changes to SYNC TextUI are documented here. This project follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and semantic versioning.
 
+## [2.1.1] — 2026-08-30
+
+### Fixed
+
+- **Glass theme rendered an opaque black rectangle in-game.** It used `backdrop-filter: blur(10px)`, which FiveM's CEF cannot sample through the transparent NUI surface — the compositor replaced the blur with a solid black box bleeding past the card. Glass is now a frosted look built from layered translucency + an inner highlight sheen (no blur), visually stable on every CEF build. Also corrected two theme selectors (`.sync-theme-minimal/compact .sync-card` → compound `.sync-card.sync-theme-*`) that never matched their own cards.
+
 ## [2.1.0] — 2026-08-30
 
 ### Added
@@ -43,6 +49,7 @@ Ground-up rebuild against the SYNC TextUI production master specification. No co
 
 - Versioning scheme moved to 2.x per project directive.
 
-[Unreleased]: https://github.com/SyncLabDev/sync_textui/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/SyncLabDev/sync_textui/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/SyncLabDev/sync_textui/releases/tag/v2.1.1
 [2.1.0]: https://github.com/SyncLabDev/sync_textui/releases/tag/v2.1.0
 [2.0.0]: https://github.com/SyncLabDev/sync_textui/releases/tag/v2.0.0

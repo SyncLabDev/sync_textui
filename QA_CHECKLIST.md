@@ -1,4 +1,4 @@
-# QA Checklist — SYNC TextUI 2.1.0
+# QA Checklist — SYNC TextUI 2.1.1
 
 Verified against the production acceptance matrix. Items requiring a live FiveM client are marked ⏸ (environment-blocked) with the exact check to perform in-game.
 

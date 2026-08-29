@@ -206,19 +206,28 @@
 /* minimal */
 .sync-theme-minimal { --card-bg: #101318; --card-border: rgba(255, 255, 255, 0.08); --sync-radius: 4px; }
 .sync-theme-minimal .sync-keycap { background: transparent; border-bottom-width: 1px; }
-.sync-theme-minimal .sync-card { box-shadow: none; }
+.sync-card.sync-theme-minimal { box-shadow: none; }
 
-/* glass */
+/* glass — frosted look via layered translucency + inner highlight sheen.
+   NO backdrop-filter: over FiveM's transparent NUI surface CEF has nothing
+   behind the page to sample, and composites an opaque black rectangle
+   instead of a blur — hardware-dependent and broken by design here. */
 .sync-theme-glass {
-  --card-bg: rgba(16, 21, 31, 0.62);
-  --card-border: rgba(255, 255, 255, 0.12);
-  --sync-radius: 8px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  --card-bg: rgba(22, 30, 45, 0.8);
+  --card-border: rgba(148, 163, 184, 0.28);
+  --sync-radius: 10px;
+}
+.sync-card.sync-theme-glass {
+  background:
+    linear-gradient(180deg, rgba(148, 163, 184, 0.12), rgba(148, 163, 184, 0.02)),
+    var(--card-bg);
+  box-shadow:
+    0 8px 26px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* compact */
 .sync-theme-compact { --card-bg: #0b0e15; --sync-radius: 3px; min-width: 170px; padding: 7px 11px; }
 .sync-theme-compact .sync-keycap { min-width: 20px; height: 20px; font-size: 10px; }
 .sync-theme-compact .sync-card-main { font-size: 12px; }
-.sync-theme-compact .sync-card { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }
+.sync-card.sync-theme-compact { box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); }

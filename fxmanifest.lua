@@ -5,7 +5,7 @@ lua54 'yes'
 name 'sync_textui'
 author 'SYNC Lab'
 description 'Framework-independent interaction UI engine — prompts, holds, progress, stacking.'
-version '2.1.0'
+version '2.1.1'
 
 ui_page 'web/dist/index.html'
 
