@@ -4,8 +4,44 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SYNC TextUI</title>
-    <script type="module" crossorigin src="/assets/index-B2P2kEzL.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DhJV0gKF.css">
+    <!--
+      Boot sentinel: a CLASSIC script (runs even if the ES module below never
+      executes) that reports page load, script errors and failed resources to
+      the game console via nuiBoot/nuiError callbacks. Vite copies this verbatim
+      into the built index.html.
+    -->
+    <script>
+      (function () {
+        var res = window.GetParentResourceName ? window.GetParentResourceName() : 'sync_textui'
+        function post(url, body) {
+          try {
+            fetch('https://' + res + '/' + url, {
+              method: 'post',
+              headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+              body: JSON.stringify(body || {}),
+            }).catch(function () {})
+          } catch (e) {}
+        }
+        window.__syncBoot = { ua: navigator.userAgent, at: Date.now() }
+        post('nuiBoot', { ua: navigator.userAgent, url: String(location.href) })
+        window.addEventListener(
+          'error',
+          function (e) {
+            if (e && e.target && e.target !== window && e.target.tagName) {
+              post('nuiError', { message: 'resource load failed', source: e.target.tagName + ':' + String(e.target.src || e.target.href || '') })
+            } else {
+              post('nuiError', { message: String((e && e.message) || (e && e.error) || 'unknown'), source: String((e && e.filename) || ''), line: (e && e.lineno) || 0, col: (e && e.colno) || 0 })
+            }
+          },
+          true
+        )
+        window.addEventListener('unhandledrejection', function (e) {
+          post('nuiError', { message: 'unhandledrejection: ' + String((e && e.reason) || 'unknown'), source: '', line: 0, col: 0 })
+        })
+      })()
+    </script>
+    <script type="module" crossorigin src="./assets/index-B0WvaQbj.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Px0V22PT.css">
   </head>
   <body>
     <div id="root"></div>

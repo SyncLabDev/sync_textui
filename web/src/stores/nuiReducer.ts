@@ -7,7 +7,7 @@ import type {
   Theme,
   UiConfig,
 } from '../types/interaction'
-import type { NuiMessage } from '../types/nui'
+import type { NuiMessage, PlaygroundPreset } from '../types/nui'
 
 // Mirror of the Lua-side validation limits (shared/constants.lua).
 const LIMITS = {
@@ -190,12 +190,14 @@ export interface NuiState {
   interactions: Map<string, Interaction>
   order: number
   config: UiConfig
+  playground: { open: boolean; presets: PlaygroundPreset[] }
 }
 
 export const initialState: NuiState = {
   interactions: new Map(),
   order: 0,
   config: { ...DEFAULT_CONFIG },
+  playground: { open: false, presets: [] },
 }
 
 const upsert = (state: NuiState, raw: unknown): NuiState => {
@@ -218,6 +220,38 @@ const applyChanges = (
   if (!existing) return state
   // Merge through the same validator so partial updates cannot bypass normalization.
   return upsert(state, { ...existing, ...changes, id, order: existing.order })
+}
+
+/** Presets arrive from Lua as plain data; sanitize before rendering. */
+const safePreset = (value: unknown): PlaygroundPreset | null => {
+  if (!value || typeof value !== 'object') return null
+  const v = value as Record<string, unknown>
+  const preset: PlaygroundPreset = {}
+  const id = str(v.id, LIMITS.id)
+  if (!id) return null
+  preset.id = id
+  const text = str(v.text, LIMITS.text)
+  if (!text) return null
+  preset.text = text
+  const key = str(v.key, LIMITS.key)
+  if (key) preset.key = key
+  const icon = str(v.icon, LIMITS.icon)
+  if (icon) preset.icon = icon
+  const description = str(v.description, LIMITS.description)
+  if (description) preset.description = description
+  if (typeof v.hold === 'number' && Number.isFinite(v.hold)) {
+    preset.hold = clamp(Math.round(v.hold), 100, 600000)
+  }
+  return preset
+}
+
+const applyPlayground = (state: NuiState, payload: { open: boolean; presets?: unknown }): NuiState => {
+  if (payload.open !== true) {
+    return { ...state, playground: { open: false, presets: [] } }
+  }
+  const raw = Array.isArray(payload.presets) ? payload.presets.slice(0, 12) : []
+  const presets = raw.map(safePreset).filter((p): p is PlaygroundPreset => p !== null)
+  return { ...state, playground: { open: true, presets } }
 }
 
 export function nuiReducer(state: NuiState, message: NuiMessage): NuiState {
@@ -285,6 +319,11 @@ export function nuiReducer(state: NuiState, message: NuiMessage): NuiState {
     }
     case 'setConfig':
       return { ...state, config: { ...state.config, ...safeConfig(message.payload) } }
+    case 'playground': {
+      const payload = message.payload
+      if (!payload || typeof payload !== 'object') return state
+      return applyPlayground(state, payload)
+    }
     default:
       return state
   }

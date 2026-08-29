@@ -40,6 +40,11 @@ function Sync.State.Upsert(interaction)
     else
         orderCounter = orderCounter + 1
         interaction.order = orderCounter
+        -- Fresh prompt on screen: suppress ox_lib's TextUI so the two never stack.
+        -- Guarded so pure-logic tests (no bridge loaded) and ox-free servers skip it.
+        if Sync.Bridge and Sync.Bridge.SuppressForeignTextUI then
+            Sync.Bridge.SuppressForeignTextUI()
+        end
     end
 
     activeInteractions[interaction.id] = interaction
@@ -121,10 +126,13 @@ function Sync.State.ApplyChanges(id, changes)
     local normalized = Sync.Validation.NormalizeInteraction(changes)
     if not normalized then return false end
 
+    -- Apply ONLY the keys the caller actually provided (validated). NormalizeInteraction
+    -- returns a full-shape table whose untouched fields carry defaults, so iterating
+    -- it would silently clobber channel/priority/text on every partial update.
     local changed = false
-    for k, v in pairs(normalized) do
-        if k ~= 'order' and current[k] ~= v then
-            current[k] = v
+    for k in pairs(changes) do
+        if k ~= 'order' and current[k] ~= normalized[k] then
+            current[k] = normalized[k]
             changed = true
         end
     end

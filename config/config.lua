@@ -32,3 +32,13 @@ Config.AllowRemoteImages = false        -- remote image URLs are rejected unless
 
 -- Debug logging
 Config.Debug = false
+
+-- ox_lib interop: ox_lib ships its own prompt UI (lib.showTextUI). Choose how
+-- SYNC coexists with it. No-op when ox_lib is not installed.
+--   'coexist'  — never touch ox's UI.
+--   'autoHide' — hide ox whenever a SYNC card appears (lightweight, on Show).
+--   'replace'  — ox's text prompt is kept hidden at ALL times and SYNC becomes
+--                the only text UI. Use this to fully replace ox_lib's prompt,
+--                and point your prompt-driving scripts at exports['sync_textui']
+--                (drop-in showTextUI / hideTextUI) so their text still renders.
+Config.OxTextUI = 'autoHide'

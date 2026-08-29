@@ -171,7 +171,15 @@ Scripts: `npm run dev · build · preview · typecheck · lint · test`.
 
 ## In-game playground
 
-Set `Config.DeveloperMode = true` and run `/synctextui` in-game. Disabled by default; keep it off in production.
+Set `Config.DeveloperMode = true` and run `/synctextui` in-game:
+
+- **Menu** — a clickable preset panel appears bottom-right; click a preset to spawn it through the real renderer, press `Esc` (or the X, or run `/synctextui` again) to close. Input focus is held only while the menu is open, and the menu refuses to open — with an explicit `dist(...)` diagnostic — if the NUI page isn't live, so input can never be captured without visible UI.
+- **`/synctextui_preview`** — focus-free alternative: toggles all four sample cards (including an auto-running hold) on screen without stealing input.
+- **`/synctextui_status`** — one-line report: developer mode, NUI ready, menu state, framework, ox_lib, `web/dist` file check, visible interactions.
+
+A boot sentinel in the page reports load and any JS error to the game console (`[sync_textui] NUI PAGE ERROR: ...`) — paste that line when troubleshooting a blank overlay.
+
+Disabled by default; keep it off in production. The full browser workstation console (`npm run dev`) remains browser-only by design — zero dev-console code ships in `web/dist`.
 
 ## Migrating from simple TextUI scripts
 
@@ -187,11 +195,55 @@ exports['sync_textui']:hideTextUI()
 
 Compat calls update a reserved interaction in place (they never stack). For real multi-prompt support, move to `Show/Hide` with explicit ids.
 
+### Fully replacing ox_lib's prompt (`lib.showTextUI`)
+
+Set `Config.OxTextUI = 'replace'`, then repoint the scripts that drive prompts. Two options, pick per script:
+
+```lua
+-- Option A: same call, different resource (minimal edit)
+-- Before:
+exports.ox_lib:showTextUI('[E] Open Garage', { position = 'left-center' })
+exports.ox_lib:hideTextUI()
+-- After:
+exports['sync_textui']:showTextUI('[E] Open Garage')
+exports['sync_textui']:hideTextUI()
+
+-- Option B: if a script imports the lib, its lib.showTextUI still targets ox_lib,
+-- so edit those calls to the sync_textui export above. 'replace' hides any ox
+-- prompt that slips through, but the TEXT only appears if the script calls SYNC.
+```
+
+`'replace'` guarantees the player never sees ox's prompt; it does **not** auto-forward the text, so a script must call `sync_textui` to have its prompt visible at all.
+
+### Worked example: qbx_garages
+
+Its zones prompt through `lib.showTextUI` in `client/main.lua` (search for `showTextUI` — two `onEnter` / `onExit` pairs). Repoint them to full designed cards:
+
+```lua
+onEnter = function()
+    if accessPoint.dropPoint and cache.vehicle then return end
+    local isDepot = garage.type == GarageType.DEPOT
+    exports['sync_textui']:Show({
+        id = 'qbx_garage_zone',
+        key = 'E',
+        icon = isDepot and 'shield' or 'car',
+        text = isDepot and locale('info.impound_e')
+            or (cache.vehicle and locale('info.park_e') or locale('info.car_e')),
+        description = garage.label,
+    })
+end,
+onExit = function()
+    exports['sync_textui']:Hide('qbx_garage_zone')
+end,
+```
+
+Drop the baked-in `"E - "` prefixes from `locales/en.json` (`"car_e": "Open Garage", …`) — SYNC draws the keycap itself. Restart the script; the prompt now renders as a SYNC card, and ox's TextUI is never called from it.
+
 ## Performance
 
 The runtime is event-driven:
 
-- No permanent `CreateThread`/`Wait(0)` loop — the hold scheduler spawns only while holds exist and exits when the last one ends.
+- No permanent `CreateThread`/`Wait(0)` loop — the hold scheduler spawns only while holds exist and exits when the last one ends. (Exception: `Config.OxTextUI = 'replace'` runs one 100 ms probe-only watchdog while it is the active policy; default modes run no loop.)
 - Duplicate suppression in Lua: byte-identical interaction payloads never reach the NUI.
 - Progress messages are emitted only when the displayed integer percentage changes.
 - React renders are memoized per interaction; a state change touches exactly one card.
@@ -203,8 +255,9 @@ Idle overhead should be effectively zero; measure in your own environment with `
 
 | Symptom | Fix |
 | --- | --- |
-| Nothing renders in-game | Ensure `web/dist` exists (ships built; or run `npm run build` in `web/`) |
+| Nothing renders in-game | Ensure `web/dist` exists (ships built; or run `npm run build` in `web/`). On any F8 log line `NUI PAGE ERROR: resource load failed @ SCRIPT:...`, the asset URL in it names a build/deploy path issue — the built `index.html` must reference `./assets/...` (relative), which `npm run build` produces |
 | Wrong framework detected | Set `Config.Framework` manually |
+| `/synctextui` does nothing / no cards | Requires `Config.DeveloperMode = true` + resource restart. Run `/synctextui_status` (F8 console): `nuiReady: false` means `web/dist` is missing/incomplete — re-copy the folder; `visible: 4` with no cards means the game is running a stale bundle — `restart sync_textui` |
 | Hold never completes | `key` as an unrecognized control id — check [client/keymap.lua](client/keymap.lua) |
 | Icon missing | Name must exist in the local registry (see above) |
 | Dev console visible in-game | Set `Config.DeveloperMode = false` (browser dev view is unrelated and safe) |
@@ -214,7 +267,10 @@ Idle overhead should be effectively zero; measure in your own environment with `
 **Does it need a server component?** No. Everything is client + NUI.
 **Can two resources drive the same id?** Last writer wins per update; ids are the coordination key.
 **Is remote HTML/script ever rendered?** Never. Text fields are plain strings; there is no `dangerouslySetInnerHTML` anywhere in the codebase.
-**What about ox_lib?** SYNC TextUI is independent and intentionally different: shared-rail stacking, compact/full auto morphing, and a browser-first development workstation.
+**What about ox_lib?** SYNC TextUI never depends on it — it runs identically with or without ox_lib installed. ox_lib ships its own prompt UI (`lib.showTextUI`); control how they coexist with `Config.OxTextUI`:
+- `'coexist'` — leave ox's UI alone.
+- `'autoHide'` (default) — hide ox's prompt the moment a SYNC card appears.
+- `'replace'` — ox's text prompt is kept hidden at all times and SYNC becomes the only text UI. Set this to fully replace ox_lib's prompt; point your prompt-driving scripts at `exports['sync_textui']:showTextUI / :hideTextUI` (drop-in, same call shape) so their text renders through SYNC.
 
 ## License
 

@@ -65,4 +65,25 @@ describe('nuiReducer', () => {
     state = nuiReducer(state, { action: 'hideAll', payload: {} })
     expect(state.interactions.size).toBe(0)
   })
+
+  it('playground opens with sanitized presets and closes to empty', () => {
+    let state = nuiReducer(initialState, {
+      action: 'playground',
+      payload: {
+        open: true,
+        presets: [
+          { id: 'garage', text: 'Open Garage', key: 'E', icon: 'car', hold: 2500 },
+          { id: '', text: 'no-id' }, // rejected: empty id
+          { text: 'no-id' }, // rejected: no id
+          { id: 'ok', text: '' }, // rejected: empty text
+        ],
+      },
+    } as NuiMessage)
+    expect(state.playground.open).toBe(true)
+    expect(state.playground.presets).toHaveLength(1)
+    expect(state.playground.presets[0].id).toBe('garage')
+    state = nuiReducer(state, { action: 'playground', payload: { open: false } })
+    expect(state.playground.open).toBe(false)
+    expect(state.playground.presets).toHaveLength(0)
+  })
 })

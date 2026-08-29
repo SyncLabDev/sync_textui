@@ -8,6 +8,15 @@ import type {
   UiConfig,
 } from './interaction'
 
+export interface PlaygroundPreset {
+  id?: string
+  key?: string
+  icon?: string
+  text?: string
+  description?: string
+  hold?: number
+}
+
 export type NuiMessage =
   | { action: 'hydrate'; payload: { interactions: Interaction[]; config: Partial<UiConfig> } }
   | { action: 'show'; payload: Interaction }
@@ -18,6 +27,7 @@ export type NuiMessage =
   | { action: 'hideChannel'; payload: { channel: string } }
   | { action: 'hideAll'; payload?: Record<string, never> }
   | { action: 'setConfig'; payload: Partial<UiConfig> }
+  | { action: 'playground'; payload: { open: boolean; presets?: unknown } }
 
 export interface ShowPayload {
   id?: string

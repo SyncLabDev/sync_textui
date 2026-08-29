@@ -1,4 +1,4 @@
-# QA Checklist — SYNC TextUI 2.0.0
+# QA Checklist — SYNC TextUI 2.1.0
 
 Verified against the production acceptance matrix. Items requiring a live FiveM client are marked ⏸ (environment-blocked) with the exact check to perform in-game.
 
@@ -9,8 +9,8 @@ Verified against the production acceptance matrix. Items requiring a live FiveM 
 | `npm run typecheck` (TS strict) | ✅ 0 errors |
 | `npm run lint` | ✅ 0 errors / 0 warnings |
 | `npm test` (Vitest: reducer contract + Lua codegen) | ✅ 10/10 |
-| `lua tests/run.lua` (validation / keymap / state / dedupe / channels / hydrate) | ✅ 17/17 |
-| `npm run build` | ✅ JS 162 kB (52 kB gzip), CSS 12 kB (3 kB gzip) |
+| `lua tests/run.lua` (validation / keymap / state / dedupe / channels / hydrate) | ✅ 19/19 |
+| `npm run build` | ✅ JS 164 kB (52 kB gzip), CSS 14 kB (4 kB gzip) |
 | All client Lua files parse | ✅ 8/8 |
 
 ## Production isolation (green, verified in this build)
@@ -43,6 +43,11 @@ Verified against the production acceptance matrix. Items requiring a live FiveM 
 - [ ] QBCore server: same
 - [ ] ESX server: same
 - [ ] Manual `Config.Framework` override respected
+- [ ] ox_lib installed: `OxTextUI='autoHide'` hides `lib.showTextUI` when a SYNC card appears; `'replace'` keeps ox prompts hidden continuously; `'coexist'`/absent ox = untouched
+- [ ] ox_lib absent: no errors on Show (state guard short-circuits)
+- [ ] `/synctextui` (DeveloperMode on): playground menu opens bottom-right; click presets to spawn cards; Esc/X closes and releases input; refuses to open (with dist diagnostic) when the NUI page is not live
+- [ ] `/synctextui_preview`: four cards toggle without any input capture; hold auto-completes
+- [ ] `/synctextui_status`: `nuiReady`, `menu` and `dist(...)` fields report truthfully
 
 ### Interaction quality
 - [ ] `key = 38` renders `E` in-game

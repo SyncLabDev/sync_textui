@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { isEnvBrowser } from './utils/isEnvBrowser'
 import { NuiProvider } from './stores/NuiProvider'
 import { InteractionStack } from './components/InteractionStack/InteractionStack'
+import { PlaygroundPanel } from './components/Playground/PlaygroundPanel'
 
 const devEnabled = import.meta.env.DEV && isEnvBrowser()
 
@@ -18,6 +19,7 @@ export default function App() {
         <Suspense fallback={null}>
           <DevProvider>
             <InteractionStack />
+            <PlaygroundPanel />
           </DevProvider>
         </Suspense>
       </NuiProvider>
@@ -27,6 +29,7 @@ export default function App() {
   return (
     <NuiProvider>
       <InteractionStack />
+      <PlaygroundPanel />
     </NuiProvider>
   )
 }
