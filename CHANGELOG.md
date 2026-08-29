@@ -43,6 +43,6 @@ Ground-up rebuild against the SYNC TextUI production master specification. No co
 
 - Versioning scheme moved to 2.x per project directive.
 
-[Unreleased]: https://github.com/fr4gout/sync_textui/compare/v2.1.0...HEAD
-[2.1.0]: https://github.com/fr4gout/sync_textui/releases/tag/v2.1.0
-[2.0.0]: https://github.com/fr4gout/sync_textui/releases/tag/v2.0.0
+[Unreleased]: https://github.com/SyncLabDev/sync_textui/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/SyncLabDev/sync_textui/releases/tag/v2.1.0
+[2.0.0]: https://github.com/SyncLabDev/sync_textui/releases/tag/v2.0.0
