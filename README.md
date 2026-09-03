@@ -2,7 +2,7 @@
 
 A framework-independent interaction UI engine for FiveM. Not a notification system, not a cropped `[E] Interact` label — a full prompt lifecycle: **show → active → holding → progress → outcome → hide**, with stacking, priorities, channels, themes and a browser developer workstation that drives the real production renderer.
 
-Part of the [SYNC Lab] ecosystem. Free, MIT, no telemetry, no licensing hooks, no external dependencies at runtime.
+Part of the [SYNC Lab] ecosystem. Free to use under the SYNC Lab Community Source License, with no telemetry, licensing hooks, or external runtime dependencies.
 
 ---
 
@@ -274,4 +274,4 @@ Idle overhead should be effectively zero; measure in your own environment with `
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Source-available under the **SYNC Lab Community Source License, Version 1.0 (2026)**. Use and private modification are permitted, including on monetized FiveM servers; redistribution and direct resale are restricted. See [LICENSE.md](LICENSE.md) for the complete terms.
